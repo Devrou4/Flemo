@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container">
+<div class="container d-flex justify-content-center mb-3">
     <form method="POST" action="/update-tasks"> <!-- Unified form -->
         {% for task in task_list %}
         <div class="form-check task-item">
             <input type="hidden" name="task_ids" value="{{ task.id }}"> <!-- Send each task id -->
             <input class="form-check-input me-2" type="checkbox" id="task_{{ task.id }}" name="task_done_{{ task.id }}" {% if task.done %}checked{% endif %} onchange="this.form.submit()">
             <label class="form-check-label" for="task_{{ task.id }}">
-                {{ task.tittle }}
+                {{ task.title }}
             </label>
             <button type="submit" name="remove_task" value="{{ task.id }}" class="remove-task-icon" aria-label="Remove task">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
@@ -17,6 +17,16 @@
             </button>
         </div>
         {% endfor %}
+    </form>
+
+
+</div>
+
+    <div class="container d-flex justify-content-center">
+    <form method="POST" action="/add-task">
+        {{ form.hidden_tag() }}  <!-- Include CSRF token -->
+        {{ form.task(class="form-control form-control-sm mb-1") }}
+        {{ form.add(class="btn btn-primary btn-sm w-100", type="submit") }}
     </form>
 </div>
 {% endblock content %}

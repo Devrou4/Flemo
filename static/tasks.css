@@ -5,7 +5,8 @@
             position: relative;
             }
 .remove-task-icon {
-            display: none; /* Hide by default */
+            display: inline; /* Hide by default */
+            visibility: hidden;
             background: none;
             border: none;
             padding: 0;
@@ -14,5 +15,6 @@
             margin-left: auto; /* Align the "X" to the right */
             }
 .task-item:hover .remove-task-icon {
+            visibility: visible;
             display: inline; /* Show on hover */
             }

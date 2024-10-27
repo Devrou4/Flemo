@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, TaskForm
 
 
 app = Flask(__name__)
@@ -7,8 +7,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'c05c5ad21a274a97267a1fbe0b243a64'
 
 task_list = [
-    {'id': 1, 'tittle': 'Dummy Task 1', 'done': True},
-    {'id': 2, 'tittle': 'Dummy Task 2', 'done': False}
+    {'id': 1, 'title': 'Dummy Task 1', 'done': True},
+    {'id': 2, 'title': 'Dummy Task 2', 'done': False}
 ]
 
 
@@ -20,7 +20,26 @@ def home():
 
 @app.route("/tasks")
 def tasks():
-    return render_template('tasks.html', task_list=task_list)
+    form = TaskForm()
+    return render_template('tasks.html', task_list=task_list, form=form)
+
+
+@app.route("/add-task", methods=['POST'])
+def add_task():
+    form = TaskForm()
+    if form.validate_on_submit():
+        # Create a new task dictionary
+        new_task = {
+            'id': max(task['id'] for task in task_list) + 1 if task_list else 1,
+            'title': form.task.data,
+            'done': False
+        }
+
+        task_list.append(new_task)
+    else:
+        flash("Failed to add task. Please try again.", "danger")
+
+    return redirect(url_for('tasks'))
 
 
 @app.route('/update-tasks', methods=['POST'])
