@@ -21,7 +21,7 @@ This app is designed to help users stay organized by managing tasks, notes, and 
 ## Roadmap
 
 - [x] Intuitive UI
-- [ ] Tasks
+- [x] Tasks
 - [ ] Notes
 - [ ] Gallery
 - [ ] User Authentication
