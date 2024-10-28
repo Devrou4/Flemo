@@ -1,10 +1,10 @@
 # Flemo
 
-<img src="./static/flemo_new.png" width="20%" height="20%">
+<img src="./static/images/flemo.png" width="20%" height="20%">
 
 
 ## Overview
-This app is designed to help users stay organized by managing tasks, notes, and a photo gallery—all in one place.
+This app is designed to help users stay organized by managing tasks, notes, and a photo gallery - all in one place.
 
 ## Features
 

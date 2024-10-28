@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/flemo.png') }}">
+
+
     {% if title %}
         <title>Flemo - {{ title }}</title>
     {% else %}
         <title>Flemo</title>
     {% endif %}
-    <link rel="icon" type="image/x-icon" href="./static/images/flemo.png">
 
     {% if request.path == url_for('tasks') %}
         <link href="./static/css/tasks.css" rel="stylesheet">
