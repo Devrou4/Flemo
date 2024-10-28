@@ -1,6 +1,6 @@
 # Flemo
 
-<img src="./static/images/flemo.png" width="20%" height="20%">
+<img src="./flemo/static/images/flemo.png" width="20%" height="20%">
 
 
 ## Overview
@@ -24,6 +24,6 @@ This app is designed to help users stay organized by managing tasks, notes, and 
 - [x] Tasks
 - [ ] Notes
 - [ ] Gallery
-- [ ] User Authentication
+- [x] User Authentication
 - [ ] Task groups
 - [ ] Note folders

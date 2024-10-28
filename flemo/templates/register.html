@@ -23,6 +23,20 @@
       {{ form.hidden_tag() }}
     </div>
 
+    <!-- errors -->
+    <div class="container mb-3 mt-3">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages%}
+          {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+    <!-- errors -->
+
     <div class="form-floating">
       {{ form.username(class="form-control", id="floatingUsername", placeholder="Username") }}
       {{ form.username.label(class="form-control-label") }}
@@ -31,17 +45,18 @@
     <div class="form-floating">
 
       {{ form.email(type="email", class="form-control", id="floatingInput", placeholder="name@example.com") }}
+      {{ form.email.label(class="form-control-label") }}
 
-      {% if form.email.errors %}
-        {{ form.email.label(class="form-control-label is-invalid") }}
-        <div class="invalid-feedback">
-          {% for error in form.email.errors %}
-          <span>{{ error }}</span>
-          {% endfor %}
-        </div>
-      {% else %}
-         {{ form.email.label(class="form-control-label") }}
-      {% endif %}
+<!--      {% if form.email.errors %}-->
+<!--        {{ form.email.label(class="form-control-label is-invalid") }}-->
+<!--        <div class="invalid-feedback">-->
+<!--          {% for error in form.email.errors %}-->
+<!--          <span>{{ error }}</span>-->
+<!--          {% endfor %}-->
+<!--        </div>-->
+<!--      {% else %}-->
+<!--         {{ form.email.label(class="form-control-label") }}-->
+<!--      {% endif %}-->
     </div>
 
     <div class="form-floating">
