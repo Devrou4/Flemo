@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash
 from flemo import app, db, bcrypt
-from flemo.forms import RegistrationForm, LoginForm, TaskForm
+from flemo.forms import RegistrationForm, LoginForm, TaskForm, UpdateAccount
 from flemo.models import User, Task, Note
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -132,3 +132,19 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route("/account", methods=['GET', 'POST'])
+@login_required
+def account():
+    form = UpdateAccount()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Account updated successfully!', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    return render_template('account.html', form=form)
