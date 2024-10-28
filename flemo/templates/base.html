@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/flemo.png') }}">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     {% if title %}
         <title>Flemo - {{ title }}</title>
@@ -30,12 +30,12 @@
       </div>
 
       <ul class="nav nav-underline col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-        <li><a href="{{ url_for('home') }}" class="nav-link px-2 {% if request.path == url_for('home') %}active{% endif %}">Home</a></li>
-        <li><a href="{{ url_for('notes') }}" class="nav-link px-2 {% if request.path == url_for('notes') %}active{% endif %}">Notes</a></li>
-        <li><a href="{{ url_for('tasks') }}" class="nav-link px-2 {% if request.path == url_for('tasks') %}active{% endif %}">Tasks</a></li>
-        <li><a href="#" class="nav-link disabled px-2">Gallery</a></li>
-        <li><a href="{{ url_for('blog') }}" class="nav-link px-2 disabled {% if request.path == url_for('blog') %}active{% endif %}">Blog</a></li>
-        <li><a href="{{ url_for('about') }}" class="nav-link px-2 {% if request.path == url_for('about') %}active{% endif %}">About</a></li>
+        <li><a href="{{ url_for('home') }}" class="nav-link px-2 {% if request.path == url_for('home') %}active{% endif %}"><i class="bi bi-house-fill"></i> Home</a></li>
+        <li><a href="{{ url_for('notes') }}" class="nav-link px-2 {% if request.path == url_for('notes') %}active{% endif %}"><i class="bi bi-stickies-fill"></i> Notes</a></li>
+        <li><a href="{{ url_for('tasks') }}" class="nav-link px-2 {% if request.path == url_for('tasks') %}active{% endif %}"><i class="bi bi-check2-all"></i> Tasks</a></li>
+        <li><a href="{{ url_for('gallery') }}" class="nav-link px-2 disabled {% if request.path == url_for('gallery') %}active{% endif %}"><i class="bi bi-image-fill"></i> Gallery</a></li>
+        <li><a href="{{ url_for('files') }}" class="nav-link px-2 disabled {% if request.path == url_for('files') %}active{% endif %}"><i class="bi bi-folder-fill"></i> Files</a></li>
+        <li><a href="{{ url_for('about') }}" class="nav-link px-2 {% if request.path == url_for('about') %}active{% endif %}"><i class="bi bi-info-circle-fill"></i> About</a></li>
       </ul>
 
       <div class="col-md-3 text-end">
