@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flemo.models import User
 from flask import flash
 from flask_login import current_user
+from flask_ckeditor import CKEditorField
 
 
 class RegistrationForm(FlaskForm):
@@ -62,3 +63,11 @@ class UpdateAccount(FlaskForm):
             if user:
                 flash('Email Taken!', 'danger')
                 raise ValidationError('Email Taken')
+
+
+class NoteField(FlaskForm):
+
+    title = StringField('Title', validators=[DataRequired()])
+    content = TextAreaField('Note', validators=[DataRequired()])
+    # content = CKEditorField('Note')
+    submit = SubmitField('Save')

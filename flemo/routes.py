@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash
 from flemo import app, db, bcrypt
-from flemo.forms import RegistrationForm, LoginForm, TaskForm, UpdateAccount
+from flemo.forms import RegistrationForm, LoginForm, TaskForm, UpdateAccount, NoteField
 from flemo.models import User, Task, Note
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -82,7 +82,57 @@ def update_tasks():
 @app.route("/notes")
 @login_required
 def notes():
-    return render_template('notes.html')
+    form = NoteField()
+    notes_list = Note.query.filter_by(user_id=current_user.id).all()
+    return render_template('notes.html', notes=notes_list, form=form)
+
+
+@app.route("/note/<int:note_id>", methods=["GET", "POST"])
+@login_required
+def note(note_id):
+    form = NoteField()
+    note_obj = Note.query.get_or_404(note_id)
+    notes_list = Note.query.filter_by(user_id=current_user.id).all()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            note_obj.title = form.title.data
+            note_obj.content = form.content.data
+            db.session.commit()
+            return redirect(url_for("note", note_id=note_obj.id))
+        else:
+            flash("Failed to update note. Please try again.", "danger")
+
+    form.title.data = note_obj.title
+    form.content.data = note_obj.content
+    return render_template('note.html', form=form, notes=notes_list, note_id=note_id)
+
+
+@app.route("/add-note", methods=['POST'])
+def add_note():
+    form = NoteField()
+    if form.validate_on_submit():
+        new_note = Note(title=form.title.data, content=form.content.data, user_id=current_user.id)
+        db.session.add(new_note)
+        db.session.commit()
+    else:
+        flash("Failed to add note. Please try again.", "danger")
+
+    return redirect(url_for('notes'))
+
+
+@app.route("/del-note", methods=['POST'])
+@login_required
+def del_note():
+    if 'delete_note' in request.form:
+        note_id = int(request.form['delete_note'])
+        note_obj = Note.query.get_or_404(note_id)
+
+        if note_obj.user_id == current_user.id:
+            db.session.delete(note_obj)
+            db.session.commit()
+        else:
+            flash("You don't have permission to delete this note.", "danger")
+    return redirect(url_for('notes'))
 
 
 @app.route("/files")

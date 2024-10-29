@@ -14,7 +14,7 @@
         </svg>
 
         <h1 align="center">Account Settings</h1>
-        <h3 align="center" class="">Logged in as, {{ current_user.username }}</h3>
+        <h3 align="center" class="">Logged in as <strong> {{ current_user.username }} </strong></h3>
 
         <div class="form-floating mb-2 mt-5">
           {{ form.username(class="form-control", placeholder="Username") }}
