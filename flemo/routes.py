@@ -23,7 +23,7 @@ def tasks():
     form = TaskForm()
     # Query to get all tasks for the current user
     task_list = Task.query.filter_by(user_id=current_user.id).all()
-    return render_template('tasks.html', task_list=task_list, form=form)
+    return render_template('tasks.html', task_list=task_list, form=form, title='Tasks')
 
 
 @app.route("/gallery")
@@ -84,7 +84,7 @@ def update_tasks():
 def notes():
     form = NoteField()
     notes_list = Note.query.filter_by(user_id=current_user.id).all()
-    return render_template('notes.html', notes=notes_list, form=form)
+    return render_template('notes.html', notes=notes_list, form=form, title='Tasks')
 
 
 @app.route("/note/<int:note_id>", methods=["GET", "POST"])
@@ -98,13 +98,13 @@ def note(note_id):
             note_obj.title = form.title.data
             note_obj.content = form.content.data
             db.session.commit()
-            return redirect(url_for("note", note_id=note_obj.id))
+            return redirect(url_for("note", note_id=note_obj.id, title=note_obj.title))
         else:
             flash("Failed to update note. Please try again.", "danger")
 
     form.title.data = note_obj.title
     form.content.data = note_obj.content
-    return render_template('note.html', form=form, notes=notes_list, note_id=note_id)
+    return render_template('note.html', form=form, notes=notes_list, note_id=note_id, title=note_obj.title)
 
 
 @app.route("/add-note", methods=['POST'])
@@ -197,4 +197,4 @@ def account():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-    return render_template('account.html', form=form)
+    return render_template('account.html', form=form, title='Account')

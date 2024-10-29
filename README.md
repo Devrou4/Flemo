@@ -22,7 +22,7 @@ This app is designed to help users stay organized by managing tasks, notes, and 
 
 - [x] Intuitive UI
 - [x] Tasks
-- [ ] Notes
+- [x] Notes
 - [ ] Gallery
 - [x] User Authentication
 - [ ] Task groups
