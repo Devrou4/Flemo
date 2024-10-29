@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container d-flex justify-content-center mb-3">
+<h1 align="center" class="fs-1">TASKS</h1>
+
+<div class="container d-flex justify-content-start mb-2 border border-secondary rounded" style="width: 320px; --bs-border-opacity: .5;">
     <form method="POST" action="{{ url_for('update_tasks') }}"> <!-- Unified form -->
         {% for task in task_list %}
-        <div class="form-check task-item">
+        <div class="form-check task-item m-2">
             <input class="form-check-input me-2" type="checkbox" id="task_{{ task.id }}" name="task_done_{{ task.id }}" {% if task.done %}checked{% endif %} onchange="this.form.submit()">
             <label class="form-check-label" for="task_{{ task.id }}">
                 {{ task.title }}
@@ -19,7 +21,7 @@
     </form>
 </div>
 
-<div class="container d-flex justify-content-center">
+<div class="container" style="width: 345px;">
     <form method="POST" action="{{ url_for('add_task') }}">
         {{ form.hidden_tag() }}  <!-- Include CSRF token -->
         {{ form.task(class="form-control form-control-sm mb-1") }}

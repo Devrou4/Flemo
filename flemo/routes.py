@@ -13,6 +13,7 @@ def index():
 
 
 @app.route("/home")
+@login_required
 def home():
     return render_template('home.html', title='Home')
 
@@ -101,9 +102,9 @@ def note(note_id):
             return redirect(url_for("note", note_id=note_obj.id, title=note_obj.title))
         else:
             flash("Failed to update note. Please try again.", "danger")
-
-    form.title.data = note_obj.title
-    form.content.data = note_obj.content
+    elif request.method == "GET":
+        form.title.data = note_obj.title
+        form.content.data = note_obj.content
     return render_template('note.html', form=form, notes=notes_list, note_id=note_id, title=note_obj.title)
 
 

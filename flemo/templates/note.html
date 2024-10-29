@@ -11,10 +11,12 @@
             <div class="text-end pr-2 mr-2 ms-auto">
                 <a href="{{ url_for('notes') }}"><button type="button" class="btn btn-primary me-2">New</button></a>
 
-                <form action="{{ url_for('del_note') }}" method="POST" style="display: inline;">
-                    <input type="hidden" name="delete_note" value="{{ note_id }}">
-                    <button type="submit" class="btn btn-outline-danger">Delete</button>
-                </form>
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
+
+<!--                <form action="{{ url_for('del_note') }}" method="POST" style="display: inline;">-->
+<!--                    <input type="hidden" name="delete_note" value="{{ note_id }}">-->
+<!--                    <button type="submit" class="btn btn-outline-danger">Delete</button>-->
+<!--                </form>-->
             </div>
         </div>
         <div class="list-group list-group-flush border-bottom overflow-auto flex-grow-1">
@@ -50,5 +52,28 @@
 
 <!--{{ ckeditor.load(custom_url=url_for('static', filename='basic/ckeditor.js')) }}-->
 <!--{{ ckeditor.config(name='content') }}-->
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteModalLabel">Delete Note?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <form action="{{ url_for('del_note') }}" method="POST" style="display: inline;">
+            <input type="hidden" name="delete_note" value="{{ note_id }}">
+                <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
 
 {% endblock content %}
