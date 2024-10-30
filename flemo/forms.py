@@ -71,3 +71,14 @@ class NoteField(FlaskForm):
     content = TextAreaField('Note', validators=[DataRequired()])
     # content = CKEditorField('Note')
     submit = SubmitField('Save')
+
+
+class RequestResetForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')

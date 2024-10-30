@@ -5,20 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="/static/images/flemo.png">
+    <link rel="icon" href="./static/images/flemo.png">
 
-    <title>Login</title>
+    <title>Reset Password</title>
 
-
-    <link href="./static/css/signin.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="./static/css/signup.css" rel="stylesheet">
   </head>
 
   <body data-bs-theme="dark" class="text-center bg-dark-subtle">
   <main class="form-signin w-100 m-auto">
   <form method="POST" action="">
     <img class="mb-4" src="./static/images/flemo.png" alt="" width="40%" height="40%">
-    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-
+    <h1 class="h3 mb-3 fw-normal">Reset Password</h1>
 
     <div>
       {{ form.hidden_tag() }}
@@ -36,24 +35,11 @@
         {% endif %}
       {% endwith %}
     </div>
-    <!-- errors -->
+    <!-- /errors -->
+
 
     <div class="form-floating">
-         {{ form.email(type="email", class="form-control", id="floatingInput", placeholder="name@example.com") }}
 
-      {% if form.email.errors %}
-        {{ form.email.label(class="form-control-label is-invalid") }}
-        <div class="invalid-feedback">
-          {% for error in form.email.errors %}
-          <span>{{ error }}</span>
-          {% endfor %}
-        </div>
-      {% else %}
-         {{ form.email.label(class="form-control-label") }}
-      {% endif %}
-
-    </div>
-    <div class="form-floating">
       {{ form.password(type="password", class="form-control", id="floatingPassword", placeholder="Password") }}
 
       {% if form.password.errors %}
@@ -68,15 +54,34 @@
       {% endif %}
     </div>
 
-    <div class="form-check text-start my-3">
+    <div class="form-floating">
 
-      {{ form.remember(class="form-check-input") }}
-      {{ form.remember.label(class="form-check-label") }}
+      {{ form.confirm_password(type="password", class="form-control", id="floatingPasswordC", placeholder="Confirm Password") }}
+
+      {% if form.confirm_password.errors %}
+        {{ form.confirm_password.label(class="form-control-label is-invalid") }}
+        <div class="invalid-feedback">
+          {% for error in form.confirm_password.errors %}
+
+            {% if error == "Field must be equal to password." %}
+                <div class="alert alert-danger">Passwords don't match!</div>
+
+            {% else %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+
+
+          {% endfor %}
+        </div>
+      {% else %}
+         {{ form.confirm_password.label(class="form-control-label") }}
+      {% endif %}
+
     </div>
-    {{ form.submit(class="btn btn-primary w-100 py-2", type="submit") }}
-    <small class="text-muted"><a href="{{url_for('reset_request')}}">Forgot password?</a></small>
-  </form>
 
+    {{ form.submit(class="btn btn-primary w-100 py-2", type="submit") }}
+
+  </form>
 </main>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">

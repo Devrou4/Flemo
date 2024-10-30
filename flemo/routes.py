@@ -1,9 +1,9 @@
 from flask import render_template, request, redirect, url_for, flash
-from flemo import app, db, bcrypt
-from flemo.forms import RegistrationForm, LoginForm, TaskForm, UpdateAccount, NoteField
+from flemo import app, db, bcrypt, mail
+from flemo.forms import RegistrationForm, LoginForm, TaskForm, UpdateAccount, NoteField, RequestResetForm, ResetPasswordForm
 from flemo.models import User, Task, Note
 from flask_login import login_user, current_user, logout_user, login_required
-
+from flask_mail import Message
 
 @app.route("/")
 def index():
@@ -46,8 +46,9 @@ def add_task():
     return redirect(url_for('tasks'))
 
 
-@app.route('/update-tasks', methods=['POST'])
+@app.route('/update-tasks', methods=['POST','GET'])
 def update_tasks():
+    form = TaskForm()
     if 'remove_task' in request.form:
         # Task removal request
         task_id = int(request.form['remove_task'])
@@ -59,6 +60,16 @@ def update_tasks():
             db.session.commit()
         else:
             flash("You don't have permission to delete this task.", "danger")
+
+    elif 'edit_task' in request.form:
+        task_id = int(request.form['edit_task'])
+        task = Task.query.get_or_404(task_id)
+
+        if task.user_id == current_user.id:
+            form.task.data = task.title
+            form.add.label = 'Update'
+            flash(f'Edit Recieved {task.title}', "info")
+
     else:
         # Update task completion statuses
         tasks_db = Task.query.filter_by(user_id=current_user.id).all()
@@ -85,7 +96,7 @@ def update_tasks():
 def notes():
     form = NoteField()
     notes_list = Note.query.filter_by(user_id=current_user.id).all()
-    return render_template('notes.html', notes=notes_list, form=form, title='Tasks')
+    return render_template('notes.html', notes=notes_list, form=form, title='Notes')
 
 
 @app.route("/note/<int:note_id>", methods=["GET", "POST"])
@@ -199,3 +210,46 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
     return render_template('account.html', form=form, title='Account')
+
+
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message('Password Reset Request', sender='flemo@noreply.net', recipients=[user.email])
+    msg.body = f'''To reset your password, click on the link below: 
+{url_for('reset_token', token=token, _external=True)}
+    
+If you did not make this request, ignore this email
+'''
+    # mail.send(msg)
+
+
+@app.route("/reset_password", methods=['GET','POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        send_reset_email(user)
+        flash('If an account with this email address exists, a password reset message will be sent shortly', 'info')
+        return redirect(url_for('login'))
+    return render_template('reset_request.html', form=form, title='Reset Password')
+
+
+@app.route("/reset_password/<token>", methods=['GET','POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    user = User.verify_reset_token(token)
+    if not user:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect(url_for('reset_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_pw
+        db.session.commit()
+        flash(f'Your password has been updated.', 'success')
+        return redirect(url_for('login'))
+    return render_template('reset_token.html', form=form, title='Reset Password')
