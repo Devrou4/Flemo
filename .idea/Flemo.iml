@@ -3,6 +3,9 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/flemo/static/flask_ckeditor" />
+      <excludeFolder url="file://$MODULE_DIR$/instance" />
+      <excludeFolder url="file://$MODULE_DIR$/flemo/static/flask_ckeditor/basic/plugins/codesnippet/lib" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.12 (Flemo)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

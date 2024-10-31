@@ -1,9 +1,11 @@
 from flask import render_template, request, redirect, url_for, flash
 from flemo import app, db, bcrypt, mail
-from flemo.forms import RegistrationForm, LoginForm, TaskForm, UpdateAccount, NoteField, RequestResetForm, ResetPasswordForm
+from flemo.forms import RegistrationForm, LoginForm, TaskForm, UpdateAccount, NoteField, RequestResetForm, \
+    ResetPasswordForm
 from flemo.models import User, Task, Note
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
+
 
 @app.route("/")
 def index():
@@ -22,7 +24,6 @@ def home():
 @login_required
 def tasks():
     form = TaskForm()
-    # Query to get all tasks for the current user
     task_list = Task.query.filter_by(user_id=current_user.id).all()
     return render_template('tasks.html', task_list=task_list, form=form, title='Tasks')
 
@@ -36,25 +37,36 @@ def gallery():
 @app.route("/add-task", methods=['POST'])
 def add_task():
     form = TaskForm()
+    edit_task_id = request.form.get("edit_task_id")
+
     if form.validate_on_submit():
-        new_task = Task(title=form.task.data, user_id=current_user.id)
-        db.session.add(new_task)
-        db.session.commit()
+        if edit_task_id:
+            task = Task.query.get_or_404(int(edit_task_id))
+            if task.user_id == current_user.id:
+                task.title = form.task.data
+                db.session.commit()
+
+            else:
+                flash("You don't have permission to edit this task.", "danger")
+        else:
+            new_task = Task(title=form.task.data, user_id=current_user.id)
+            db.session.add(new_task)
+            db.session.commit()
+
     else:
         flash("Failed to add task. Please try again.", "danger")
 
     return redirect(url_for('tasks'))
 
 
-@app.route('/update-tasks', methods=['POST','GET'])
+@app.route('/update-tasks', methods=['POST', 'GET'])
+@login_required
 def update_tasks():
     form = TaskForm()
+
     if 'remove_task' in request.form:
-        # Task removal request
         task_id = int(request.form['remove_task'])
         task = Task.query.get_or_404(task_id)
-
-        # Ensure the task belongs to the current user
         if task.user_id == current_user.id:
             db.session.delete(task)
             db.session.commit()
@@ -64,25 +76,28 @@ def update_tasks():
     elif 'edit_task' in request.form:
         task_id = int(request.form['edit_task'])
         task = Task.query.get_or_404(task_id)
-
         if task.user_id == current_user.id:
-            form.task.data = task.title
-            form.add.label = 'Update'
-            flash(f'Edit Recieved {task.title}', "info")
+            return render_template(
+                'tasks.html',
+                task_list=Task.query.filter_by(user_id=current_user.id).all(),
+                form=form,
+                edit_task_id=task_id,
+                task_title=task.title,
+                title='Tasks'
+            )
+        else:
+            flash("You don't have permission to edit this task.", "danger")
 
     else:
-        # Update task completion statuses
         tasks_db = Task.query.filter_by(user_id=current_user.id).all()
-        updated = False  # Track if any update was made
+        updated = False
         for task in tasks_db:
             checkbox_name = f'task_done_{task.id}'
-            # Check if this task's checkbox is checked in the form data
             new_status = checkbox_name in request.form
-            if task.done != new_status:  # Update only if there's a change
+            if task.done != new_status:
                 task.done = new_status
                 updated = True
 
-        # Commit only if there was an actual change
         if updated:
             db.session.commit()
         else:

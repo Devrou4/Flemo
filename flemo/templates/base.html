@@ -11,7 +11,7 @@
         <title>Flemo</title>
     {% endif %}
 
-    {% if request.path == url_for('tasks') %}
+    {% if request.path == url_for('tasks') or request.path == url_for('update_tasks') %}
         <link href="./static/css/tasks.css" rel="stylesheet">
     {% endif %}
 
@@ -32,7 +32,7 @@
       <ul class="nav nav-underline col-12 col-md-auto mb-2 justify-content-center mb-md-0">
         <li><a href="{{ url_for('home') }}" class="nav-link px-2 {% if request.path == url_for('home') %}active{% endif %}"><i class="bi bi-house-fill"></i> Home</a></li>
         <li><a href="{{ url_for('notes') }}" class="nav-link px-2 {% if request.path == url_for('notes') or request.path.startswith('/note/') %}active{% endif %}"><i class="bi bi-stickies-fill"></i> Notes</a></li>
-        <li><a href="{{ url_for('tasks') }}" class="nav-link px-2 {% if request.path == url_for('tasks') %}active{% endif %}"><i class="bi bi-check2-all"></i> Tasks</a></li>
+        <li><a href="{{ url_for('tasks') }}" class="nav-link px-2 {% if request.path == url_for('tasks') or request.path == url_for('update_tasks') %}active{% endif %}"><i class="bi bi-check2-all"></i> Tasks</a></li>
         <li><a href="{{ url_for('gallery') }}" class="nav-link px-2 disabled {% if request.path == url_for('gallery') %}active{% endif %}"><i class="bi bi-image-fill"></i> Gallery</a></li>
         <li><a href="{{ url_for('files') }}" class="nav-link px-2 disabled {% if request.path == url_for('files') %}active{% endif %}"><i class="bi bi-folder-fill"></i> Files</a></li>
         <li><a href="{{ url_for('about') }}" class="nav-link px-2 {% if request.path == url_for('about') %}active{% endif %}"><i class="bi bi-info-circle-fill"></i> About</a></li>

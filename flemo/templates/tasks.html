@@ -4,7 +4,7 @@
 <h1 align="center" class="fs-1">TASKS</h1>
 
 <div class="container d-flex justify-content-start mb-2 border border-secondary rounded" style="width: 320px; --bs-border-opacity: .5;">
-    <form method="POST" action="{{ url_for('update_tasks') }}"> <!-- Unified form -->
+    <form method="POST" action="{{ url_for('update_tasks') }}">
         {% for task in task_list %}
         <div class="form-check task-item m-2">
             <input class="form-check-input me-2" type="checkbox" id="task_{{ task.id }}" name="task_done_{{ task.id }}" {% if task.done %}checked{% endif %} onchange="this.form.submit()">
@@ -12,7 +12,7 @@
                 {{ task.title }}
             </label>
             <button type="submit" name="edit_task" value="{{ task.id }}" class="edit-task-icon" aria-label="Edit task">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
                     <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
                 </svg>
             </button>
@@ -28,9 +28,14 @@
 
 <div class="container" style="width: 345px;">
     <form method="POST" action="{{ url_for('add_task') }}">
-        {{ form.hidden_tag() }}  <!-- Include CSRF token -->
-        {{ form.task(class="form-control form-control-sm mb-1") }}
-        {{ form.add(class="btn btn-primary btn-sm w-100", type="submit") }}
+        {{ form.hidden_tag() }}
+
+        {% if edit_task_id %}
+            <input type="hidden" name="edit_task_id" value="{{ edit_task_id }}">
+        {% endif %}
+
+        {{ form.task(class="form-control form-control-sm mb-1", value=task_title if edit_task_id else '') }}
+        {{ form.add(class="btn btn-sm w-100 btn-primary", type="submit", value="Update" if edit_task_id else "Add") }}
     </form>
 </div>
 
