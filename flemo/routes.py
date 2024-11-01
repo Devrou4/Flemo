@@ -1,11 +1,12 @@
 from flask import render_template, request, redirect, url_for, flash
 from flemo import app, db, bcrypt, mail
 from flemo.forms import RegistrationForm, LoginForm, TaskForm, UpdateAccount, NoteField, RequestResetForm, \
-    ResetPasswordForm
-from flemo.models import User, Task, Note
+    ResetPasswordForm, PhotoForm
+from flemo.models import User, Task, Note, Photo
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
-
+from werkzeug.utils import secure_filename
+import os
 
 @app.route("/")
 def index():
@@ -28,10 +29,48 @@ def tasks():
     return render_template('tasks.html', task_list=task_list, form=form, title='Tasks')
 
 
-@app.route("/gallery")
+@app.route("/gallery", methods=['GET', 'POST'])
 @login_required
 def gallery():
-    return render_template('gallery.html')
+    form = PhotoForm()
+
+    if form.validate_on_submit():
+        # Get the uploaded file
+        file = form.file.data
+        if file:
+            try:
+                # Create a user-specific directory
+                base_directory = os.path.abspath(os.path.dirname(__file__))
+                user_directory = os.path.join(base_directory, 'static', 'user_data', str(current_user.id))
+                os.makedirs(user_directory, exist_ok=True)  # Create the directory if it doesn't exist
+
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(user_directory, filename)  # Save the file in the user's directory
+                print(f"Saving file to: {filepath}")  # Debugging print
+                file.save(filepath)
+
+                # Create a new photo record in the database
+                new_photo = Photo(title=filename, path=filepath, user_id=current_user.id)
+                db.session.add(new_photo)
+                db.session.commit()
+
+                return redirect(url_for('gallery'))
+            except Exception as e:
+                print(f"Failed to save file: {e}")  # Log the error
+                flash("Failed to upload the file. Please try again.", "danger")
+
+    photo_list = Photo.query.filter_by(user_id=current_user.id).all()
+    return render_template('gallery.html', photos=photo_list, form=form)
+
+
+@app.route("/del-photo/<int:photo_id>", methods=['POST'])
+def del_photo(photo_id):
+    photo = Photo.query.filter_by(id=photo_id).first()
+    if photo:
+        os.remove(photo.path)
+        db.session.delete(photo)
+        db.session.commit()
+        return redirect(url_for('gallery'))
 
 
 @app.route("/add-task", methods=['POST'])
