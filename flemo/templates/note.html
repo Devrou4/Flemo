@@ -9,6 +9,7 @@
             <span class="fs-3 fw-bold p-1">Notes</span>
 
             <div class="text-end pr-2 mr-2 ms-auto">
+                <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#folderModal"><i class="bi bi-folder-plus"></i></button>
                 <a href="{{ url_for('notes') }}"><button type="button" class="btn btn-primary me-2">New</button></a>
 
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
@@ -53,7 +54,7 @@
 <!--{{ ckeditor.load(custom_url=url_for('static', filename='basic/ckeditor.js')) }}-->
 <!--{{ ckeditor.config(name='content') }}-->
 
-<!-- Modal -->
+<!-- Del Note Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -68,12 +69,38 @@
             <input type="hidden" name="delete_note" value="{{ note_id }}">
                 <button type="submit" class="btn btn-danger">Delete</button>
         </form>
-
-
       </div>
     </div>
   </div>
 </div>
+
+
+<!-- Folder Modal -->
+<div class="modal fade" id="folderModal" tabindex="-1" aria-labelledby="folderModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Folder Name</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{{ url_for('new_folder') }}" method="POST">
+      <div class="modal-body">
+
+            {{ form.hidden_tag() }}
+            {{ folder_form.title(class="form-control mb-3") }}
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        {{ folder_form.submit(class="btn btn-primary", type="submit") }}
+
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 
 
 {% endblock content %}

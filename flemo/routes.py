@@ -1,12 +1,13 @@
 from flask import render_template, request, redirect, url_for, flash
 from flemo import app, db, bcrypt, mail
 from flemo.forms import RegistrationForm, LoginForm, TaskForm, UpdateAccount, NoteField, RequestResetForm, \
-    ResetPasswordForm, PhotoForm
-from flemo.models import User, Task, Note, Photo
+    ResetPasswordForm, PhotoForm, NoteFolderForm
+from flemo.models import User, Task, Note, Photo, NoteFolder
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 from werkzeug.utils import secure_filename
 import os
+
 
 @app.route("/")
 def index():
@@ -35,7 +36,6 @@ def gallery():
     form = PhotoForm()
 
     if form.validate_on_submit():
-        # Get the uploaded file
         file = form.file.data
         if file:
             try:
@@ -64,6 +64,7 @@ def gallery():
 
 
 @app.route("/del-photo/<int:photo_id>", methods=['POST'])
+@login_required
 def del_photo(photo_id):
     photo = Photo.query.filter_by(id=photo_id).first()
     if photo:
@@ -74,6 +75,7 @@ def del_photo(photo_id):
 
 
 @app.route("/add-task", methods=['POST'])
+@login_required
 def add_task():
     form = TaskForm()
     edit_task_id = request.form.get("edit_task_id")
@@ -153,10 +155,11 @@ def notes():
     return render_template('notes.html', notes=notes_list, form=form, title='Notes')
 
 
-@app.route("/note/<int:note_id>", methods=["GET", "POST"])
+@app.route("/notes/<int:note_id>", methods=["GET", "POST"])
 @login_required
 def note(note_id):
     form = NoteField()
+    folder_form = NoteFolderForm()
     note_obj = Note.query.get_or_404(note_id)
     notes_list = Note.query.filter_by(user_id=current_user.id).all()
     if request.method == "POST":
@@ -170,10 +173,23 @@ def note(note_id):
     elif request.method == "GET":
         form.title.data = note_obj.title
         form.content.data = note_obj.content
-    return render_template('note.html', form=form, notes=notes_list, note_id=note_id, title=note_obj.title)
+    return render_template('note.html', form=form, notes=notes_list, note_id=note_id, title=note_obj.title, folder_form=folder_form)
+
+
+@app.route("/new-folder", methods=['POST'])
+@login_required
+def new_folder():
+    folder_form = NoteFolderForm()
+    if folder_form.validate_on_submit():
+        folder = NoteFolder(title=folder_form.title.data, user_id=current_user.id)
+        db.session.add(folder)
+        db.session.commit()
+
+    return redirect(url_for('notes'))
 
 
 @app.route("/add-note", methods=['POST'])
+@login_required
 def add_note():
     form = NoteField()
     if form.validate_on_submit():
@@ -208,6 +224,7 @@ def files():
 
 
 @app.route("/about")
+@login_required
 def about():
     return render_template('about.html', title='About')
 

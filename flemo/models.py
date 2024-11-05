@@ -17,6 +17,7 @@ class User(db.Model, UserMixin):
     tasks = db.relationship('Task', backref='owner', lazy=True)
     notes = db.relationship('Note', backref='owner', lazy=True)
     photos = db.relationship('Photo', backref='owner', lazy=True)
+    notes_folder = db.relationship('NoteFolder', backref='owner', lazy=True)
 
     def get_reset_token(self):
         s = Serializer(app.config['SECRET_KEY'])
@@ -49,10 +50,18 @@ class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(30), nullable=False)
     content = db.Column(db.Text)
+    folder_id = db.Column(db.Integer, db.ForeignKey('note_folder.id'), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
         return f"Note('{self.title}')"
+
+
+class NoteFolder(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(20), nullable=False)
+    notes = db.relationship('Note', backref='folder', lazy=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
 class Photo(db.Model):

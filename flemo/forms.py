@@ -88,3 +88,8 @@ class ResetPasswordForm(FlaskForm):
 class PhotoForm(FlaskForm):
     file = FileField('Upload File', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
     submit = SubmitField('Submit')
+
+
+class NoteFolderForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    submit = SubmitField('Submit')
