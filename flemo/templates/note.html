@@ -38,13 +38,49 @@
         <form action="{{ url_for('note', note_id=note_id) }}" method="POST" class="d-flex flex-column h-100">
             {{ form.hidden_tag() }}
 
-            <h3>{{ form.title.label(class="form-control-label") }}</h3>
+            <div class="d-flex mb-3">
+            <h3 class="me-auto">{{ form.title.label(class="form-control-label") }}</h3>
+
+
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+
+            {% for lvalue, label in form.layout.choices %}
+               <input type="radio" class="btn-check" name="{{ form.layout.name }}" id="btnradio{{ lvalue }}" value="{{ lvalue }}" autocomplete="off" onclick="document.getElementById('invisible-submit').click();" {% if layout == lvalue %}checked{% endif %}>
+                <label class="btn btn-outline-primary bi {{label}}" for="btnradio{{ lvalue }}"></label>
+
+            {% endfor %}
+
+            </div>
+                <button type="submit" id="invisible-submit" style="display: none;">Submit</button>
+            </div>
+
+
+
             {{ form.title(class="form-control mb-3") }}
 
+                {% if layout == "1" %}
             <!-- Content field that fills remaining height and scrolls if needed -->
-            <div class="flex-grow-1 overflow-auto mb-4">
-                {{ form.content(class="form-control h-100") }}
-            </div>
+                    <div class="flex-grow-1 overflow-auto mb-4">
+                        {{ form.content(class="form-control h-100") }}
+                    </div>
+
+                {% elif layout == "2" %}
+            <!-- Content field that fills remaining height and scrolls if needed -->
+                    <div class="flex-grow-1 overflow-auto mb-4 row row-col-2 list-group list-group-horizontal">
+
+                        {{ form.content(class="form-control h-100 col list-group-item") }}
+                        <div class="h-100 col list-group-item">{{ preview | safe }}</div>
+                    </div>
+
+                {% elif layout == "3" %}
+            <!-- Content field that fills remaining height and scrolls if needed -->
+                    <div class="flex-grow-1 overflow-auto mb-4">
+
+                        <div class="h-100 col form-control">{{ preview | safe }}</div>
+                        {{ form.content(class="d-none") }}
+                    </div>
+
+                {% endif %}
 
             {{ form.submit(class="btn btn-primary w-100 py-2", type="submit") }}
         </form>
@@ -99,7 +135,6 @@
     </div>
   </div>
 </div>
-
 
 
 

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, FileField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, FileField, RadioField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flemo.models import User
 from flask import flash
@@ -71,6 +71,7 @@ class NoteField(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     content = TextAreaField('Note', validators=[DataRequired()])
     # content = CKEditorField('Note')
+    layout = RadioField('Layout', choices=[('1', 'bi-list'), ('2', 'bi-layout-split'), ('3', 'bi-file-earmark-image')], default='1',validators=[DataRequired()])
     submit = SubmitField('Save')
 
 

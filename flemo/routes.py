@@ -7,6 +7,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 from werkzeug.utils import secure_filename
 import os
+import markdown
 
 
 @app.route("/")
@@ -162,18 +163,23 @@ def note(note_id):
     folder_form = NoteFolderForm()
     note_obj = Note.query.get_or_404(note_id)
     notes_list = Note.query.filter_by(user_id=current_user.id).all()
+    layout = request.args.get('layout', '1')
+
     if request.method == "POST":
         if form.validate_on_submit():
+            layout = form.layout.data
             note_obj.title = form.title.data
             note_obj.content = form.content.data
             db.session.commit()
-            return redirect(url_for("note", note_id=note_obj.id, title=note_obj.title))
+            return redirect(url_for("note", note_id=note_obj.id, title=note_obj.title, layout=layout))
         else:
             flash("Failed to update note. Please try again.", "danger")
     elif request.method == "GET":
         form.title.data = note_obj.title
         form.content.data = note_obj.content
-    return render_template('note.html', form=form, notes=notes_list, note_id=note_id, title=note_obj.title, folder_form=folder_form)
+
+    preview = markdown.markdown(note_obj.content)
+    return render_template('note.html', form=form, notes=notes_list, note_id=note_id, title=note_obj.title, folder_form=folder_form, layout=layout, preview=preview)
 
 
 @app.route("/new-folder", methods=['POST'])
