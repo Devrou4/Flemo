@@ -164,6 +164,8 @@ def note(note_id):
     note_obj = Note.query.get_or_404(note_id)
     notes_list = Note.query.filter_by(user_id=current_user.id).all()
     layout = request.args.get('layout', '1')
+    folders = NoteFolder.query.filter_by(user_id=current_user.id).all()
+    open_folders = request.args.get('open_folders', '').split(',')
 
     if request.method == "POST":
         if form.validate_on_submit():
@@ -179,7 +181,7 @@ def note(note_id):
         form.content.data = note_obj.content
 
     preview = markdown.markdown(note_obj.content)
-    return render_template('note.html', form=form, notes=notes_list, note_id=note_id, title=note_obj.title, folder_form=folder_form, layout=layout, preview=preview)
+    return render_template('note.html', form=form, notes=notes_list, folders=folders, open_folders=open_folders, note_id=note_id, title=note_obj.title, folder_form=folder_form, layout=layout, preview=preview)
 
 
 @app.route("/new-folder", methods=['POST'])
