@@ -21,11 +21,17 @@
                 <ul class="nav flex-column">
 
                     {% for folder in folders %}
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#folder-{{folder.id}}" role="button" aria-expanded="false" aria-controls="folder-{{folder.id}}">
+                    <li class="nav-item note-folder">
+                        <div class="d-flex row row-cols-2">
+                        <a class="nav-link col" data-bs-toggle="collapse" href="#folder-{{folder.id}}" role="button" aria-expanded="false" aria-controls="folder-{{folder.id}}">
                             <i class="bi bi-folder-fill"> {{folder.title}}</i>
                         </a>
+                        <div class="col text-end nav-link edit-folder">
+                        <a href="#"><i class="bi bi-pencil-fill"></i></i></a>
+                        <a href="{{ url_for('del_folder', folder_id=folder.id)}}"><i class="bi bi-trash-fill text-danger"></i></a>
+                        </div>
 
+                        </div>
                         <div class="collapsed" id="folder-{{folder.id}}">
                             <ul class="nav flex-column ms-3">
                                 <li class="nav-item">

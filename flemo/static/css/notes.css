@@ -1,0 +1,11 @@
+.note-folder{
+
+}
+
+.edit-folder{
+    visibility: hidden;
+}
+
+.note-folder:hover .edit-folder{
+    visibility: visible;
+}

@@ -215,6 +215,13 @@ def change_folder(note_id):
     return redirect(url_for('notes'))
 
 
+@app.route("/del-folder/<int:folder_id>", methods=['POST','GET'])
+@login_required
+def del_folder(folder_id):
+    flash(folder_id)
+    return redirect(url_for('notes'))
+
+
 @app.route("/add-note", methods=['POST'])
 @login_required
 def add_note():

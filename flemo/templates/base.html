@@ -14,8 +14,11 @@
     {% if request.path == url_for('tasks') or request.path == url_for('update_tasks') %}
         <link href="./static/css/tasks.css" rel="stylesheet">
     {% endif %}
-    {% if request.path == url_for('gallery') or request.path == url_for('update_tasks') %}
+    {% if request.path == url_for('gallery') %}
         <link href="./static/css/gallery.css" rel="stylesheet">
+    {% endif %}
+    {% if request.path.startswith('/notes') %}
+        <link href="{{ url_for('static', filename='css/notes.css') }}" rel="stylesheet">
     {% endif %}
 
 </head>
