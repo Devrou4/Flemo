@@ -12,16 +12,55 @@
 <!--                <button type="button" class="btn btn-outline-danger">Delete</button>-->
             </div>
         </div>
-        <div class="list-group list-group-flush border-bottom overflow-auto flex-grow-1">
-            {% for note_obj in notes %}
-             <a href="{{ url_for('note', note_id=note_obj.id) }}" class="list-group-item list-group-item-action py-3 lh-sm" aria-current="true">
-                <div class="d-flex w-100 align-items-center justify-content-between">
-                    <strong class="mb-1">{{ note_obj.title }}</strong>
-                </div>
-                <div class="col-10 mb-1 small">{{ note_obj.content }}</div>
-             </a>
-            {% endfor %}
-        </div>
+
+
+
+                    <div class="list-group list-group-flush border-bottom overflow-auto flex-grow-1">
+                <ul class="nav flex-column">
+                    {% for folder in folders %}
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#folder-{{folder.id}}" role="button" aria-expanded="false" aria-controls="folder-{{folder.id}}">
+                            <i class="bi bi-folder-fill"> {{folder.title}}</i>
+                        </a>
+                        <div class="collapsed" id="folder-{{folder.id}}">
+                            <ul class="nav flex-column ms-3">
+                                <li class="nav-item">
+                                    {% for note_obj in notes %}
+                                        {% if note_obj.folder_id == folder.id %}
+                                        <a href="{{ url_for('note', note_id=note_obj.id) }}" class="list-group-item rounded list-group-item-action {% if request.path == url_for('note', note_id=note_obj.id) %}active{% endif %} lh-sm" aria-current="true">
+                                            <div class="d-flex w-100 align-items-center justify-content-between">
+                                                <strong class="mb-1"><i class="bi bi-file-text-fill"></i> {{ note_obj.title }}</strong>
+
+
+                                            </div>
+<!--                                            <div class="col-10 mb-1 small">{{ note_obj.content }}</div>-->
+                                         </a>
+
+                                        {% endif %}
+                                    {% endfor %}
+                                </li>
+
+                            </ul>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+<!--OLD NOTE LIST-->
+<!--        <div class="list-group list-group-flush border-bottom overflow-auto flex-grow-1">-->
+<!--            {% for note_obj in notes %}-->
+<!--             <a href="{{ url_for('note', note_id=note_obj.id) }}" class="list-group-item list-group-item-action py-3 lh-sm" aria-current="true">-->
+<!--                <div class="d-flex w-100 align-items-center justify-content-between">-->
+<!--                    <strong class="mb-1">{{ note_obj.title }}</strong>-->
+<!--                </div>-->
+<!--                <div class="col-10 mb-1 small">{{ note_obj.content }}</div>-->
+<!--             </a>-->
+<!--            {% endfor %}-->
+<!--        </div>-->
+
+
+
     </div>
 
     <!-- Editor Form Column -->

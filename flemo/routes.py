@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash
 from flemo import app, db, bcrypt, mail
 from flemo.forms import RegistrationForm, LoginForm, TaskForm, UpdateAccount, NoteField, RequestResetForm, \
-    ResetPasswordForm, PhotoForm, NoteFolderForm
+    ResetPasswordForm, PhotoForm, NoteFolderForm, ChangeFolderForm
 from flemo.models import User, Task, Note, Photo, NoteFolder
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -153,7 +153,8 @@ def update_tasks():
 def notes():
     form = NoteField()
     notes_list = Note.query.filter_by(user_id=current_user.id).all()
-    return render_template('notes.html', notes=notes_list, form=form, title='Notes')
+    folders = NoteFolder.query.filter_by(user_id=current_user.id).all()
+    return render_template('notes.html', notes=notes_list, form=form, title='Notes', folders=folders)
 
 
 @app.route("/notes/<int:note_id>", methods=["GET", "POST"])
@@ -166,6 +167,12 @@ def note(note_id):
     layout = request.args.get('layout', '1')
     folders = NoteFolder.query.filter_by(user_id=current_user.id).all()
     open_folders = request.args.get('open_folders', '').split(',')
+
+    change_folder_form = ChangeFolderForm()
+    choices = []
+    for folder in folders:
+        choices.append((folder.id, folder.title))
+    change_folder_form.selected_folder.choices = choices
 
     if request.method == "POST":
         if form.validate_on_submit():
@@ -181,7 +188,7 @@ def note(note_id):
         form.content.data = note_obj.content
 
     preview = markdown.markdown(note_obj.content)
-    return render_template('note.html', form=form, notes=notes_list, folders=folders, open_folders=open_folders, note_id=note_id, title=note_obj.title, folder_form=folder_form, layout=layout, preview=preview)
+    return render_template('note.html', form=form, notes=notes_list, folders=folders, open_folders=open_folders, note_id=note_id, title=note_obj.title, folder_form=folder_form, change_folder_form=change_folder_form, layout=layout, preview=preview)
 
 
 @app.route("/new-folder", methods=['POST'])
@@ -193,6 +200,18 @@ def new_folder():
         db.session.add(folder)
         db.session.commit()
 
+    return redirect(url_for('notes'))
+
+
+@app.route("/change-folder/<int:note_id>", methods=['POST'])
+@login_required
+def change_folder(note_id):
+    change_folder_form = ChangeFolderForm()
+    if change_folder_form.submit():
+        note_obj = Note.query.get_or_404(note_id)
+        note_obj.folder_id = change_folder_form.selected_folder.data
+        db.session.add(note_obj)
+        db.session.commit()
     return redirect(url_for('notes'))
 
 

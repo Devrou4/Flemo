@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, FileField, RadioField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, FileField, RadioField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flemo.models import User
 from flask import flash
@@ -94,3 +94,8 @@ class PhotoForm(FlaskForm):
 class NoteFolderForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+
+class ChangeFolderForm(FlaskForm):
+    selected_folder = SelectField('Folder')
+    submit = SubmitField('Save Changes')
