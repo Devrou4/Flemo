@@ -154,7 +154,14 @@ def notes():
     form = NoteField()
     notes_list = Note.query.filter_by(user_id=current_user.id).all()
     folders = NoteFolder.query.filter_by(user_id=current_user.id).all()
-    return render_template('notes.html', notes=notes_list, form=form, title='Notes', folders=folders)
+    folder_form = NoteFolderForm()
+    if not NoteFolder.query.get(1):
+        default_folder = NoteFolder(id=1, title='Uncategorized', user_id=current_user.id)
+        db.session.add(default_folder)
+        db.session.commit()
+        return redirect(url_for('notes'))
+
+    return render_template('notes.html', notes=notes_list, form=form, title='Notes', folders=folders, folder_form=folder_form)
 
 
 @app.route("/notes/<int:note_id>", methods=["GET", "POST"])
@@ -215,10 +222,22 @@ def change_folder(note_id):
     return redirect(url_for('notes'))
 
 
-@app.route("/del-folder/<int:folder_id>", methods=['POST','GET'])
+@app.route("/del-folder/<int:folder_id>", methods=['POST', 'GET'])
 @login_required
 def del_folder(folder_id):
     flash(folder_id)
+    return redirect(url_for('notes'))
+
+
+@app.route('/rename_folder/<int:folder_id>', methods=['POST'])
+def rename_folder(folder_id):
+    folder = NoteFolder.query.get_or_404(folder_id)  # Retrieve the folder using its ID
+    new_name = request.form.get('title')  # Get the new title from the form
+    if folder:
+        folder.title = new_name
+        db.session.commit()
+    else:
+        flash('Folder not found.', 'danger')
     return redirect(url_for('notes'))
 
 

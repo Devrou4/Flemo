@@ -50,7 +50,7 @@ class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(30), nullable=False)
     content = db.Column(db.Text)
-    folder_id = db.Column(db.Integer, db.ForeignKey('note_folder.id'), nullable=True)
+    folder_id = db.Column(db.Integer, db.ForeignKey('note_folder.id'), nullable=False, default='1')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
