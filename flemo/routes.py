@@ -153,7 +153,7 @@ def update_tasks():
 def notes():
     form = NoteField()
     notes_list = Note.query.filter_by(user_id=current_user.id).all()
-    folders = NoteFolder.query.filter_by(user_id=current_user.id).all()
+    folders = NoteFolder.query.filter_by(user_id=current_user.id).order_by(NoteFolder.title).all()
     folder_form = NoteFolderForm()
     if not NoteFolder.query.get(1):
         default_folder = NoteFolder(id=1, title='Uncategorized', user_id=current_user.id)
@@ -172,7 +172,7 @@ def note(note_id):
     note_obj = Note.query.get_or_404(note_id)
     notes_list = Note.query.filter_by(user_id=current_user.id).all()
     layout = request.args.get('layout', '1')
-    folders = NoteFolder.query.filter_by(user_id=current_user.id).all()
+    folders = NoteFolder.query.filter_by(user_id=current_user.id).order_by(NoteFolder.title).all()
     open_folders = request.args.get('open_folders', '').split(',')
 
     change_folder_form = ChangeFolderForm()
@@ -225,7 +225,21 @@ def change_folder(note_id):
 @app.route("/del-folder/<int:folder_id>", methods=['POST', 'GET'])
 @login_required
 def del_folder(folder_id):
-    flash(folder_id)
+    try:
+        # Reassign notes in the folder to "Uncategorized"
+        notes_list = Note.query.filter_by(user_id=current_user.id, folder_id=folder_id).all()
+        for note_obj in notes_list:
+            note_obj.folder_id = 1  # Assuming 1 is the ID for "Uncategorized"
+        db.session.commit()
+
+        # Delete the folder
+        folder = NoteFolder.query.get_or_404(folder_id)
+        db.session.delete(folder)
+        db.session.commit()
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f"An error occurred: {str(e)}", "danger")
     return redirect(url_for('notes'))
 
 

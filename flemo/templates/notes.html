@@ -26,11 +26,60 @@
                             <i class="bi bi-folder-fill"> {{folder.title}}</i>
                         </a>
                         {% if not folder.title == 'Uncategorized' %}
-                        <div class="col text-end nav-link edit-folder">
-                        <a data-bs-toggle="modal" data-bs-target="#renameFolderModal-{{ folder.id }}"><i class="bi bi-pencil-fill"></i></a>
-                        <a href="#"><i class="bi bi-trash-fill text-danger"></i></a>
-                        </div>
+                            <div class="col text-end nav-link edit-folder">
+                                <!-- Modal Trigger -->
+                                <a data-bs-toggle="modal" data-bs-target="#renameFolderModal-{{ folder.id }}"><i class="bi bi-pencil-fill"></i></a>
+                                <a data-bs-toggle="modal" data-bs-target="#deleteFolderModal-{{ folder.id }}"><i class="bi bi-trash-fill text-danger"></i></a>
+                            </div>
                         {% endif %}
+
+                         <!-- Rename Folder Modal -->
+                        <div class="modal fade" id="renameFolderModal-{{ folder.id }}" tabindex="-1" aria-labelledby="renameFolderModalLabel-{{ folder.id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="renameFolderModalLabel-{{ folder.id }}">Rename Folder</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="{{ url_for('rename_folder', folder_id=folder.id) }}" method="POST">
+                                        <div class="modal-body">
+                                            {{ form.hidden_tag() }}
+                                            <input type="hidden" name="folder_id" value="{{ folder.id }}">
+                                            {{ folder_form.title(class="form-control mb-3", value=folder.title) }}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            {{ folder_form.submit(class="btn btn-primary", type="submit") }}
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Delete Folder Modal -->
+                        <div class="modal fade" id="deleteFolderModal-{{ folder.id }}" tabindex="-1" aria-labelledby="deleteFolderModalLabel-{{ folder.id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="deleteFolderModalLabel-{{ folder.id }}">Delete Folder</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="{{ url_for('del_folder', folder_id=folder.id) }}" method="POST">
+                                        {{ form.hidden_tag() }}
+                                        <div class="modal-body">
+                                            Are you sure you want to delete the folder "<strong>{{ folder.title }}</strong>"?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+
 
                         </div>
                         <div class="collapsed" id="folder-{{folder.id}}">
@@ -116,47 +165,6 @@
     </div>
   </div>
 </div>
-
-<!-- Loop Through Folders -->
-{% for folder in folders %}
-<li class="nav-item note-folder">
-    <div class="d-flex row row-cols-2">
-        <a class="nav-link col" data-bs-toggle="collapse" href="#folder-{{ folder.id }}" role="button" aria-expanded="false" aria-controls="folder-{{ folder.id }}">
-            <i class="bi bi-folder-fill"> {{ folder.title }}</i>
-        </a>
-        {% if folder.title != 'Uncategorized' %}
-        <div class="col text-end nav-link edit-folder">
-            <!-- Modal Trigger -->
-            <a data-bs-toggle="modal" data-bs-target="#renameFolderModal-{{ folder.id }}"><i class="bi bi-pencil-fill"></i></a>
-            <a href="#"><i class="bi bi-trash-fill text-danger"></i></a>
-        </div>
-        {% endif %}
-    </div>
-
-    <!-- Rename Folder Modal -->
-    <div class="modal fade" id="renameFolderModal-{{ folder.id }}" tabindex="-1" aria-labelledby="renameFolderModalLabel-{{ folder.id }}" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="renameFolderModalLabel-{{ folder.id }}">Rename Folder</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ url_for('rename_folder', folder_id=folder.id) }}" method="POST">
-                    <div class="modal-body">
-                        {{ form.hidden_tag() }}
-                        <input type="hidden" name="folder_id" value="{{ folder.id }}">
-                        {{ folder_form.title(class="form-control mb-3", value=folder.title) }}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        {{ folder_form.submit(class="btn btn-primary", type="submit") }}
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</li>
-{% endfor %}
 
 
 <!--{{ ckeditor.load(custom_url=url_for('static', filename='basic/ckeditor.js')) }}-->
