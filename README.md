@@ -1,5 +1,7 @@
 # Flemo
 
+### DISCLAIMER: THIS IS A PERSONAL PROJECT FOR LEARNING PURPOSES
+
 <img src="./flemo/static/images/flemo.png" width="20%" height="20%">
 
 
